@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+
+    <title>ケンコーコム注文一覧</title>
+    <link rel="stylesheet" th:href="@{/css/demo_page.css}" />
+    <link rel="stylesheet" th:href="@{/css/demo_table.css}" />
+    <link rel="stylesheet" th:href="@{/css/jquery.tooltip.css}" />
+
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.dataTables.nightly.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.tooltip.js}"></script>
+
+</head>
+<body id="dt_example">
+<div id="container">
+    <h1><a href="settings" target="_blank" style="cursor:pointer;">システム設定</a></h1>
+
+    <table cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+        <thead>
+        <tr>
+            <th style="width: 80px;">状態</th>
+            <th style="width: 100px;">PTR 社受注番号</th>
+            <th style="width: 160px;">顧客受注番号</th>
+            <th style="width: 100px;">受注日</th>
+            <th style="width: 100px;">配送先 名称</th>
+            <th style="width: 180px;">配送先 住所</th>
+            <th style="width: 100px;">連絡先名</th>
+            <th style="width: 100px;">配送先 連絡先電話番号</th>
+            <th style="width: 360px;">配送先 連絡先 Email アドレス</th>
+            <th style="width: 120px;">請求先 名称</th>
+            <th style="width: 100px;">請求先 郵便番号</th>
+            <th style="width: 220px;">請求先 住所</th>
+            <th style="width: 100px;">請求先 連絡先名</th>
+            <th style="width: 100px;">請求先 連絡先電話番号</th>
+            <th style="width: 360px;">請求先 連絡先 Email アドレス</th>
+            <th style="width: 100px;">顧客価格 (税抜き)</th>
+            <th style="width: 100px;">顧客価格 (税込み)</th>
+            <th style="width: 100px;">値引き金額１（税込み）</th>
+            <th style="width: 100px;">値引き金額２（税込み）</th>
+            <th style="width: 180px;">ラインアイテム 行番号</th>
+            <th style="width: 180px;">商品コード</th>
+            <th style="width: 620px;">商品名</th>
+            <th style="width: 80px;">受注個数</th>
+            <th style="width: 100px;">顧客価格 (税抜き)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="24">Loading data from server</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>状態</th>
+            <th>PTR 社受注番号</th>
+            <th>顧客受注番号</th>
+            <th>受注日</th>
+            <th>配送先 名称</th>
+            <th>配送先 住所</th>
+            <th>連絡先名</th>
+            <th>配送先 連絡先電話番号</th>
+            <th>配送先 連絡先 Email アドレス</th>
+            <th>請求先 名称</th>
+            <th>請求先 郵便番号</th>
+            <th>請求先 住所</th>
+            <th>請求先 連絡先名</th>
+            <th>請求先 連絡先電話番号</th>
+            <th>請求先 連絡先 Email アドレス</th>
+            <th>顧客価格 (税抜き)</th>
+            <th>顧客価格 (税込み)</th>
+            <th>値引き金額１（税込み）</th>
+            <th>値引き金額２（税込み）</th>
+            <th>ラインアイテム 行番号</th>
+            <th>商品コード</th>
+            <th>商品名</th>
+            <th>受注個数</th>
+            <th>顧客価格 (税抜き)</th>
+        </tr>
+        </tfoot>
+    </table>
+    <div class="paging_full_numbers" style="width:80px;float:left;">
+        <span id="delBtn" style="cursor: pointer" class="previous paginate_button paginate_button_disabled">Delete</span>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        var aSelected = [];
+
+        var table = $('#example').dataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "bFilter": false,
+            "bSearchable": false,
+            "bAutoWidth": false,
+            "sScrollX": "1200px",
+            "sPaginationType": "full_numbers",
+            /*使用post方式
+             "fnServerData": function ( sSource, aoData, fnCallback ) {
+             $.ajax( {
+             "dataType": 'json',
+             "type": "POST",
+             "url": sSource,
+             "data": aoData,
+             "success": fnCallback
+             } );
+             }*/
+            "sAjaxSource": "api/data2",
+            "oLanguage": {
+                //"sUrl": "cn.txt"
+                "sLengthMenu": "１ページあたり_MENU_レコードを表示する",
+                "sZeroRecords": "データなし",
+                "sInfo": " _START_ - _END_ / _TOTAL_件中",
+                "sInfoEmpty": "データなし",
+                //"sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+                "oPaginate": {
+                    "sFirst": "最初",
+                    "sPrevious": "前のページ",
+                    "sNext": "次のページ",
+                    "sLast": "最後"
+                }
+//                ,
+//                "sProcessing": "<img src='/images/loading.gif' />"
+            },
+
+            "aoColumns": [
+                {"mDataProp": "status", "sWidth": "80px"},
+                {"mDataProp": "receive_order_id", "sWidth": "100px", "sClass": "oID"},
+                {"mDataProp": "receive_order_row_shop_cut_form_id", "sWidth": "160px"},
+                {"mDataProp": "receive_order_date", "sWidth": "100px"},
+                {"mDataProp": "receive_order_consignee_name", "sWidth": "100px"},
+                {"mDataProp": "receive_order_consignee_address1", "sWidth": "180px"},
+                {"mDataProp": "receive_order_consignee_name", "sWidth": "100px"},
+                {"mDataProp": "receive_order_consignee_tel", "sWidth": "100px"},
+                {"mDataProp": "receive_order_purchaser_mail_address", "sWidth": "360px"},
+                {"mDataProp": "receive_order_purchaser_name", "sWidth": "120px"},
+                {"mDataProp": "receive_order_purchaser_zip_code", "sWidth": "100px"},
+                {"mDataProp": "receive_order_purchaser_address1", "sWidth": "220px"},
+                {"mDataProp": "receive_order_purchaser_name", "sWidth": "100px"},
+                {"mDataProp": "receive_order_purchaser_tel", "sWidth": "100px"},
+                {"mDataProp": "receive_order_purchaser_mail_address", "sWidth": "360px"},
+                {"mDataProp": "receive_order_total_amount", "sWidth": "100px"},
+                {"mDataProp": "receive_order_total_amount", "sWidth": "100px"},
+                {"mDataProp": "receive_order_point_amount", "sWidth": "100px"},
+                {"mDataProp": "receive_order_other_amount", "sWidth": "100px"},
+                {"mDataProp": "receive_order_row_no", "sWidth": "180px"},
+                {"mDataProp": "receive_order_row_goods_id", "sWidth": "180px"},
+                {"mDataProp": "receive_order_row_goods_name", "sWidth": "620px"},
+                {"mDataProp": "receive_order_row_quantity", "sWidth": "80px"},
+                {"mDataProp": "receive_order_row_unit_price", "sWidth": "100px"}
+            ],
+
+            "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+                if ( jQuery.inArray(aData.DT_RowId, aSelected) !== -1 ) {
+                    $(nRow).addClass('row_selected');
+                }
+                return nRow;
+            }
+
+        });
+        //setInterval( function () {debugger
+        //           table.ajax.reload();
+        //            }, 30000 );
+        $('#example tbody tr').live('click', function () {
+            var id = this.id;
+            var index = jQuery.inArray(id, aSelected);
+
+            if ( index === -1 ) {
+                aSelected.push( id );
+            } else {
+                aSelected.splice( index, 1 );
+            }
+
+            $(this).toggleClass('row_selected');
+        } );
+
+        var s = document.getElementById("delBtn");
+        s.onclick = function () {
+            $.each(aSelected, function(index, rowId){
+                // Create a hidden element
+                console.log(rowId+",");
+            });
+            var ids = "";
+            $('#example tr.row_selected td.oID').each(function() {
+                var id = $(this).text();
+                ids += id;
+                ids += ",";
+            });
+            $.post("/del",{ids:ids},
+                function(data){
+                    if(data.result==1) {
+                        alert("success");
+                        window.location.href="/";
+                    }
+                }
+                ,"json");
+        };
+
+    });
+</script>
+</body>
+</html>

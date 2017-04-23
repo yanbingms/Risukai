@@ -1,0 +1,32 @@
+server:
+  port: 8090
+#  ssl:
+#    key-store: keystore
+#    key-store-password: risukai
+#    keyStoreType: PKCS12
+#    keyAlias: tomcat
+spring:
+  application:
+    name: api    # 项目名称尽量用小写
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update                  # 自动生成数据表
+  datasource:                           # 指定数据源
+    platform: mysql                        # 指定数据源类型
+    url: jdbc:mysql://localhost:3306/e_log?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+#    password: 123456
+    password: FUWUqi2017
+logging:
+  level:
+    ROOT: info
+    org.springframework.web: ERROR
+    com.demo.api: info
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level - %msg%n"
+#    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+#  path: /Users/mhh/Desktop/file/log
+#  file: log.log

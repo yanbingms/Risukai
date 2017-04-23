@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    
+    <title>システム設定</title>
+      <link rel="stylesheet" th:href="@{/css/demo_page.css}" />
+      <link rel="stylesheet" th:href="@{/css/demo_table.css}" />
+      <link rel="stylesheet" th:href="@{/css/jquery.tooltip.css}" />
+
+      <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+      <script type="text/javascript" th:src="@{/js/jquery.dataTables.nightly.js}"></script>
+
+    <style type="text/css">
+        table.display td.left {
+            text-align:left;
+        }
+    table.display td.right {
+        text-align:right;
+    }
+    table.display input {
+        text-align:left;
+        min-width:200px;
+    }
+    .label {
+        width: 14%;
+    }
+    .label2 {
+        width: 18%;
+    }
+    .intext {
+        width: 34%;
+    }
+    </style>
+  </head>
+  <body id="dt_example">
+    <div id="container">
+      <h1>システム設定</h1>
+      <table style="width:700px;margin:0;" cellpadding="0" cellspacing="0" border="0" class="display" id="example">
+          <tbody>
+              <tr>
+                  <td class="label2">&nbsp;</td>
+                  <td class="intext left">ネクストエンジン</td>
+                  <td class="label">&nbsp;</td>
+                  <td class="intext">&nbsp;</td>
+              </tr>
+              <tr>
+                  <td class="right">good_supplier_id</td>
+                  <td class="left"><input type="text" name="goodSupplierId" id="goodSupplierId" /></td>
+                  <td colspan="2" class="left" style="color:red;">*</td>
+              </tr>
+              <tr>
+                  <td class="right">監視間隔</td>
+                  <td class="left"><input type="text" name="time" id="time" /></td>
+                  <td colspan="2" class="left" style="color:red;">*単位（分）</td>
+              </tr>
+              <tr>
+                  <td class="right">client_id</td>
+                  <td class="left"><input type="text" id="kid" name="kid" /></td>
+                  <td class="right">client_secret</td>
+                  <td class="left"><input type="text" name="secret" id="secret" /></td>
+              </tr>
+              <tr><td colspan="4">&nbsp;</td></tr>
+              <tr>
+                  <td>&nbsp;</td>
+                  <td class="left" colspan="4">ケンコーコム</td>
+              </tr>
+              <tr>
+                  <td class="right">ユーザー名</td>
+                  <td class="left"><input type="text" name="uname" id="uname" /></td>
+                  <td class="right">パスワード</td>
+                  <td class="left"><input type="text" name="password" id="password" /></td>
+              </tr>
+              <tr>
+                  <td class="right">モード</td>
+                  <td class="left"><label><input type="radio" name="model" id="model1" value="1" style="min-width:0px;" />テスト</label><label style="margin-left:20px;"><input type="radio" name="model" id="model0" value="0" style="min-width:0px;" />本番</label></td>
+                  
+                  <td>&nbsp;</td>
+              </tr>
+              <tr><td colspan="4">&nbsp;</td></tr>
+              <tr>
+                  <td>&nbsp;</td>
+                  <td class="left" colspan="4">エラー発生時の再試行の設定</td>
+              </tr>
+              <tr>
+                  <td class="right">失敗の再試行</td>
+                  <td class="left"><input type="text" name="reNum" id="reNum" /></td>
+                  <td colspan="2" class="left" style="color:red;">(0)再試行しません</td>
+              </tr>
+              <tr>
+                  <td class="right">失敗の再試行間隔</td>
+                  <td class="left"><input type="text" name="interva" id="interva" /></td>
+                  <td colspan="2" class="left" style="color:red;">*単位（分）</td>
+              </tr>
+              <tr><td>&nbsp;</td></tr>
+              <tr>
+                  <td>&nbsp;</td>
+                  <td class="left"><input type="button" id="save" style="width:80px;text-align:center;cursor:pointer;color:green" value="保存" /></td>
+              </tr>
+          </tbody>
+      </table>
+      
+    </div>
+    <script>
+        
+        $(document).ready(function () {
+            $.get("/api/config",function(data){
+                  
+                  if(data.result==1) {
+                    $("#kid").val(data.data.kid);
+                    $("#goodSupplierId").val(data.data.goodSupplierId);
+                    $("#secret").val(data.data.secret);
+                    $("#uname").val(data.data.uname);
+                    $("#password").val(data.data.password);
+                    $("#reNum").val(data.data.reNum);
+                    $("#interva").val(data.data.interva);
+                    if("0" == data.data.model) {
+                        $("#model0").attr("checked","checked");
+                    } else {
+                        $("#model1").attr("checked","checked");
+                    }
+                    $("#time").val(data.data.time);
+                  }
+               }
+            ,"json");
+                          
+          $("#save").click(function(){
+            var goodSupplierId = $("#goodSupplierId").val();
+            var kid = $("#kid").val();
+            var secret = $("#secret").val();
+            var uname = $("#uname").val();
+            var password = $("#password").val();
+            var time = $("#time").val();
+            var reNum = $("#reNum").val();
+            var interva = $("#interva").val();
+            var model = $('input[name="model"]:checked').val()
+                           $.post("/api/save",{goodSupplierId:goodSupplierId,kid:kid,secret:secret,uname:uname,
+                                   password:password, time:time,reNum:reNum,interva:interva,model:model},
+                               function(data){
+                                  if(data.result==1) {
+                                    alert("success");
+                                  } else if(data.result==2) {
+                                    alert("Success, need to be reauthorized！");
+                                      window.location.href="/api/auth";
+                                  }
+               }
+            ,"json");
+          });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="DEV_HOME" value="C:\\risukai\\log" />
+	<!--<property name="DEV_HOME" value="/Users/mhh/Desktop/file/log" />-->
+	<timestamp key="bySecond" datePattern="yyyyMMddHHmmss"/>
+
+	<!-- 控制台输出日志 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder charset="utf-8"> <!-- encoder 可以指定字符集，对于中文输出有意义 -->
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE-AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--<file>${DEV_HOME}/system-${bySecond}.log</file>-->
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%date %level [%thread] [%file : %line] %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${DEV_HOME}/system-.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!--<timeBasedFileNamingAndTriggeringPolicy-->
+				<!--class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
+				<!--<maxFileSize>10MB</maxFileSize>-->
+			<!--</timeBasedFileNamingAndTriggeringPolicy>-->
+			<maxHistory>150</maxHistory>
+		</rollingPolicy>
+
+	</appender>
+
+	<logger name="com.demo.api" level="info"
+		additivity="false">
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<!--<root level="info">-->
+		<!--<appender-ref ref="FILE-AUDIT" />-->
+	<!--</root>-->
+
+</configuration>
